@@ -1,9 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './TodoAdd.css'; // CSS dosyasını import edeceğiz
 
 const TodoAdd = () => {
   const [todoadd, setTodoAdd] = useState("");
-  const [todoList, setTodoList] = useState([]);
+  const [todoList, setTodoList] = useState(() => {
+    const savedTodos = localStorage.getItem('todos');
+    return savedTodos ? JSON.parse(savedTodos) : [];
+  });
+
+  // todoList değiştiğinde localStorage'a kaydet
+  useEffect(() => {
+    localStorage.setItem('todos', JSON.stringify(todoList));
+  }, [todoList]);
+
+  // Farklı sekmelerde senkronizasyon için
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'todos') {
+        setTodoList(JSON.parse(e.newValue) || []);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   const UpdateTodo = (e) => {
     setTodoAdd(e.target.value);
