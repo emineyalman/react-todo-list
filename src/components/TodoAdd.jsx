@@ -56,7 +56,7 @@ const TodoAdd = () => {
   }
 
   const clearAllTodos = () => {
-    if (window.confirm('Tüm görevleri silmek istediğinizden emin misiniz?')) {
+    if (window.confirm('Are you sure you want to delete all tasks?')) {
       setTodoList([]);
     }
   }
@@ -76,11 +76,11 @@ const TodoAdd = () => {
           onChange={UpdateTodo}
           onKeyPress={handleKeyPress}
           type="text"
-          placeholder="Yeni görev ekle..."
+          placeholder="Add new task..."
           className="todo-input"
         />
         <button onClick={AddNewTodo} className="add-button">
-          Ekle
+          Add
         </button>
       </div>
 
@@ -90,25 +90,25 @@ const TodoAdd = () => {
             className={`filter-button ${filter === 'all' ? 'active' : ''}`}
             onClick={() => setFilter('all')}
           >
-            Tümü
+            All
           </button>
           <button 
             className={`filter-button ${filter === 'active' ? 'active' : ''}`}
             onClick={() => setFilter('active')}
           >
-            Aktif
+            Active
           </button>
           <button 
             className={`filter-button ${filter === 'completed' ? 'active' : ''}`}
             onClick={() => setFilter('completed')}
           >
-            Tamamlanan
+            Completed
           </button>
           <button 
             className="clear-all-button"
             onClick={clearAllTodos}
           >
-            Tümünü Sil
+            Clear All
           </button>
         </div>
       )}
@@ -117,10 +117,10 @@ const TodoAdd = () => {
         {filteredTodos.length === 0 ? (
           <p className="empty-message">
             {filter === 'all' 
-              ? 'Henüz hiç görev eklenmemiş!' 
+              ? 'No tasks added yet!' 
               : filter === 'active'
-              ? 'Aktif görev bulunmuyor!'
-              : 'Tamamlanmış görev bulunmuyor!'}
+              ? 'No active tasks!'
+              : 'No completed tasks!'}
           </p>
         ) : (
           filteredTodos.map((todo) => (
