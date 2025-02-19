@@ -7,6 +7,7 @@ const TodoAdd = () => {
     const savedTodos = localStorage.getItem('todos');
     return savedTodos ? JSON.parse(savedTodos) : [];
   });
+  const [filter, setFilter] = useState('all'); // Yeni state: filtreleme için
 
   // todoList değiştiğinde localStorage'a kaydet
   useEffect(() => {
@@ -54,6 +55,18 @@ const TodoAdd = () => {
     setTodoList(prev => prev.filter(todo => todo.id !== id));
   }
 
+  const clearAllTodos = () => {
+    if (window.confirm('Tüm görevleri silmek istediğinizden emin misiniz?')) {
+      setTodoList([]);
+    }
+  }
+
+  const filteredTodos = todoList.filter(todo => {
+    if (filter === 'active') return !todo.completed;
+    if (filter === 'completed') return todo.completed;
+    return true;
+  });
+
   return (
     <div className="todo-container">
       <h2 className="todo-title">✨ Todo List</h2>
@@ -71,26 +84,65 @@ const TodoAdd = () => {
         </button>
       </div>
 
+      {todoList.length > 0 && (
+        <div className="filters">
+          <button 
+            className={`filter-button ${filter === 'all' ? 'active' : ''}`}
+            onClick={() => setFilter('all')}
+          >
+            Tümü
+          </button>
+          <button 
+            className={`filter-button ${filter === 'active' ? 'active' : ''}`}
+            onClick={() => setFilter('active')}
+          >
+            Aktif
+          </button>
+          <button 
+            className={`filter-button ${filter === 'completed' ? 'active' : ''}`}
+            onClick={() => setFilter('completed')}
+          >
+            Tamamlanan
+          </button>
+          <button 
+            className="clear-all-button"
+            onClick={clearAllTodos}
+          >
+            Tümünü Sil
+          </button>
+        </div>
+      )}
+
       <div className="todo-list">
-        {todoList.map((todo) => (
-          <div key={todo.id} className="todo-item">
-            <input
-              type="checkbox"
-              checked={todo.completed}
-              onChange={() => toggleComplete(todo.id)}
-              className="todo-checkbox"
-            />
-            <span className={`todo-text ${todo.completed ? 'completed' : ''}`}>
-              {todo.text}
-            </span>
-            <button 
-              onClick={() => deleteTodo(todo.id)}
-              className="delete-button"
-            >
-              🗑️
-            </button>
-          </div>
-        ))}
+        {filteredTodos.length === 0 ? (
+          <p className="empty-message">
+            {filter === 'all' 
+              ? 'Henüz hiç görev eklenmemiş!' 
+              : filter === 'active'
+              ? 'Aktif görev bulunmuyor!'
+              : 'Tamamlanmış görev bulunmuyor!'}
+          </p>
+        ) : (
+          filteredTodos.map((todo) => (
+            <div key={todo.id} className="todo-item">
+              <input
+                type="checkbox"
+                checked={todo.completed}
+                onChange={() => toggleComplete(todo.id)}
+                className="todo-checkbox"
+              />
+              <span className={`todo-text ${todo.completed ? 'completed' : ''}`}>
+                {todo.text}
+              </span>
+              <button 
+                onClick={() => deleteTodo(todo.id)}
+                className="delete-button"
+              >
+                🗑️
+              </button>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
